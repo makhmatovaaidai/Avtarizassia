@@ -1,23 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import { useEffect } from "react";
+import "./App.css";
+import Form from "./components/Form";
+import SignIn from "./components/SignIn";
 
 function App() {
+  const [array, setArray] = useState([]);
+
+  const getRequestUser = async () => {
+    const response = await fetch(
+      "https://redu-bd068-default-rtdb.firebaseio.com/aidai.json"
+    );
+    const result = await response.json();
+    const users = [];
+    for (const key in result) {
+      users.push({
+        email: result[key].email,
+        password: result[key].password,
+      });
+    }
+    setArray(users);
+    console.log(result);
+  };
+  useEffect(() => {
+    getRequestUser();
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Form />
+      <SignIn array={array} />
     </div>
   );
 }
